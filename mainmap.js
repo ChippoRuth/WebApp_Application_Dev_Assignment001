@@ -53,9 +53,17 @@ document.getElementById('measure-distance').onclick = function() {
 };
 
 //get user location and center the map on it
-document.getElementById('my-location').onclick = function() {
-     (navigator.geolocation). getCurrentPosition(showPosition);
-};
+document.getElementById('my-location-btn')
+.addEventListener ("click",function ()
+{
+    navigator.geolocation. getCurrentPosition(function(Position)
+    {
+        var latitude = Position.coords.latitude;
+        var longitude = Position.coords.longitude;
+        var userLocation = ol.proj.fromLonLat([longitude, latitude]);
+        map.getView().animate({center: userLocation, zoom: 15, duration: 1000});
+    });
+});
 
 
 document.getElementById('zoom-out').onclick = function() {
