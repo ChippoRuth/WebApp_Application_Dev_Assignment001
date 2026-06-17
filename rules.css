@@ -54,3 +54,15 @@ li.my-darling-class {
 .unfinished-task {
     color: rgb(0, 0, 0);
 }
+
+#measure-distance,
+#my-location {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+#measure-distance:hover,
+#my-location:hover {
+    background-color: rgb(21, 73, 185);
+    color: #fff;
+}

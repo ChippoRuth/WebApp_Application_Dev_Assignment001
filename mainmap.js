@@ -14,7 +14,49 @@ let mapObjectInput = {
         })
       };
 
+//allow the user to draw a line on the map
 var map = new ol.Map(mapObjectInput);
+var draw;
+var source = new ol.source.Vector();
+
+var vectorLayer = new ol.layer.Vector({
+    source: source
+});
+map.addLayer(vectorLayer);
+
+//measure distance function
+function addMeasureInteraction() {
+    draw = new ol.interaction.Draw({
+        source: source,
+        type: 'LineString'
+    });
+    map.addInteraction(draw);
+    draw.on('drawend', function(event) {
+        var line = event.feature.getGeometry();
+        var length = ol.sphere.getLength(line);
+        alert('Distance: ' + (length / 1000).toFixed(2) + ' kilometers');
+        map.removeInteraction(draw);
+    });
+}
+
+//function to show user location
+function showPosition(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    var userLocation = ol.proj.fromLonLat([longitude, latitude]);
+    var view = map.getView();
+    view.animate({center: userLocation, zoom: 12});
+}
+
+document.getElementById('measure-distance').onclick = function() {
+    addMeasureInteraction();
+};
+
+//get user location and center the map on it
+document.getElementById('my-location').onclick = function() {
+     (navigator.geolocation). getCurrentPosition(showPosition);
+};
+
 
 document.getElementById('zoom-out').onclick = function() {
     var view = map.getView();
