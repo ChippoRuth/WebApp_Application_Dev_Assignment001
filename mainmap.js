@@ -14,6 +14,7 @@ let mapObjectInput = {
         })
       };
 
+
 //allow the user to draw a line on the map
 var map = new ol.Map(mapObjectInput);
 var draw;
@@ -31,11 +32,33 @@ function addMeasureInteraction() {
         type: 'LineString'
     });
     map.addInteraction(draw);
+
     draw.on('drawend', function(event) {
+        // 1. Get the geometry of the drawn line
         var line = event.feature.getGeometry();
+        
+        // 2. Calculate the length (in meters) and convert to km
         var length = ol.sphere.getLength(line);
-        alert('Distance: ' + (length / 1000).toFixed(2) + ' kilometers');
-        map.removeInteraction(draw);
+        var output = (length / 1000).toFixed(2) + ' km';
+        
+        // 3. Get the last coordinate of the line to position our text box
+        var lastCoord = line.getLastCoordinate();
+
+        // 4. Dynamically create an HTML Element for the label
+        var tooltipElement = document.createElement('div');
+        tooltipElement.className = 'ol-tooltip ol-tooltip-static';
+        tooltipElement.innerHTML = output;
+
+        // 5. Create an OpenLayers Overlay using that HTML element
+        var tooltipOverlay = new ol.overlay.Overlay({
+            element: tooltipElement,
+            offset: [0, -15],        // Shifts the label slightly upward over the point
+            positioning: 'bottom-center'
+        });
+
+        // 6. Bind the overlay position to the end of the line and append it to the map
+        tooltipOverlay.setPosition(lastCoord);
+        map.addOverlay(tooltipOverlay);
     });
 }
 
